@@ -138,13 +138,7 @@ var durationClockUnits = parseInt(convertedDuration[0])
 
 
             }
-        } else {
-            chartData[i] = parsedDuration;
-            chartLabels[i] = actObj.name;
-            colors[i] = actObj.newColor;
-            colorReplacement.splice(0,1)
-            
-            
+
         }
     }
     chart.update();
@@ -217,10 +211,10 @@ var chart = new Chart(ctx, {
 
 $(document).ready(function () {
 
-    var  localArray = JSON.parse(localStorage.getItem('activityList'));
+    var localArray = JSON.parse(localStorage.getItem('activityList'));
     if (localArray !== null) {
         console.log(localArray)
-        for (var i = 0; i < localArray.length; i++){
+        for (var i = 0; i < localArray.length; i++) {
             var tempArr = localArray[i]
             tempArr.newColor = colorReplacement[0]
             console.log(tempArr)
@@ -228,10 +222,18 @@ $(document).ready(function () {
 
         }
     }
-    $('#reset-charts').on('click', function(){
-        console.log('clicked you.')
-        reset()
-    })
+
+    $.ajax({
+        url: 'http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1',
+        success: function (data) {
+            console.log(data)
+            var post = data.shift(); // The data is an array of posts. Grab the first one.
+            $('#quote').html(post.content);
+
+            // If the Source is available, use it. Otherwise hide it.
+            
+        },
+    });
 
     $("#get-duration").on("click", function (event) {
         event.preventDefault();
@@ -297,15 +299,15 @@ $(document).ready(function () {
             var tempDuration = $("#activity-duration").val().trim();
 
             //runs getDuration if they put in a start & end but didnt finish
-            if (($("#activity-duration").val() === "") &&
-                ($("#start-time").val() !== "") && ($("#end-time").val() !== "")) {
-                newActivity.duration = newActivity.getDuration();
+            if (($("#activity-duration").val("") === "") &&
+                ($("#start-time").val("") !== "") && ($("#end-time").val("") !== "")) {
+                newActivity.duration = newActivity.getDuration()
             }
             //pulls duration from the box if they input it and a start time manually
-            if (($("#activity-duration").val() !== "") && ($("#start-time").val() !== "")) {
-                newActivity.duration = newActivity.roundDuration(tempDuration);
+            if (($("#activity-duration").val("") !== "") && ($("#start-time").val("") !== "")) {
+                newActivity.duration = tempDuration;
+
             }
-            //calculates end time if they left it blank
             if ($("#end-time").val() === "") {
                 var newStart = newActivity.start.split(":");
                 var newDur = newActivity.duration.split(":");
